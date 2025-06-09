@@ -7,7 +7,7 @@ const app = express();
 const PORT = 3000;
 
 // Middleware
-app.use(cors({ origin: 'https://your-frontend.vercel.app' })); // Change to your frontend URL
+app.use(cors({ origin: 'https://webinggeniusrrrrrr.github.io/Signupoage/' })); // Change to your frontend URL
 app.use(express.json());
 
 // SQLite DB setup
