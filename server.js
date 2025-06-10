@@ -9,7 +9,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: '*',
+    origin: '*'
   }
 });
 
@@ -17,7 +17,10 @@ io.on('connection', (socket) => {
   console.log('User connected');
 
   socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
+    io.emit('chat message', {
+      name: msg.name,
+      text: msg.text
+    });
   });
 
   socket.on('disconnect', () => {
@@ -27,5 +30,5 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
