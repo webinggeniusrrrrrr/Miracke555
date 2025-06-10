@@ -1,64 +1,31 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const socketIo = require('socket.io');
 
 const app = express();
-const PORT = 3000;
+app.use(cors());
 
-// Middleware
-app.use(cors({ origin: 'https://signupoage.vercel.app/' })); // Change to your frontend URL
-app.use(express.json());
-
-// SQLite DB setup
-const dbPath = path.join(__dirname, 'users.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) return console.error('SQLite connection error:', err.message);
-  console.log('Connected to SQLite database');
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: '*',
+  }
 });
 
-// Create users table
-db.run(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE,
-    password TEXT
-  )
-`, (err) => {
-  if (err) console.error('Failed to create table:', err.message);
-  else console.log('Users table ready');
-});
+io.on('connection', (socket) => {
+  console.log('User connected');
 
-// Signup route
-app.post('/signup', (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) return res.status(400).send('Missing username or password');
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
 
-  const query = `INSERT INTO users (username, password) VALUES (?, ?)`;
-  db.run(query, [username, password], function (err) {
-    if (err) {
-      if (err.message.includes('UNIQUE constraint failed')) {
-        return res.status(409).send('Username already exists');
-      }
-      return res.status(500).send('Database error');
-    }
-    res.status(201).send('Signup successful');
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
   });
 });
 
-// Login route
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  const query = `SELECT * FROM users WHERE username = ? AND password = ?`;
-
-  db.get(query, [username, password], (err, row) => {
-    if (err) return res.status(500).send('Database error');
-    if (row) return res.status(200).send('Login successful');
-    return res.status(401).send('Invalid credentials');
-  });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
