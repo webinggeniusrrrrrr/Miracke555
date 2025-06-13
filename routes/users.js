@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('sqlite3').verbose();
-const conn = new db.Database('./db/database.sqlite');
+const path = require('path');
+const conn = new db.Database(path.join(__dirname, 'db', 'database.sqlite'));
 
 router.post('/register', (req, res) => {
   const { username, password, referred_by } = req.body;
