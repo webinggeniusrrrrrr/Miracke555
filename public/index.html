@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AdShare</title>
+</head>
+<body>
+  <h1>AdShare App</h1>
+
+  <h2>Register</h2>
+  <form id="registerForm">
+    <input type="text" name="name" placeholder="Name" required><br>
+    <input type="email" name="email" placeholder="Email" required><br>
+    <button type="submit">Register</button>
+  </form>
+
+  <h2>Deposit (after paying on Flutterwave)</h2>
+  <form id="depositForm">
+    <input type="number" name="userId" placeholder="User ID" required><br>
+    <input type="text" name="txRef" placeholder="Flutterwave Tx Ref" required><br>
+    <button type="submit">Verify & Deposit</button>
+  </form>
+
+  <h2>Withdraw</h2>
+  <form id="withdrawForm">
+    <input type="number" name="userId" placeholder="User ID" required><br>
+    <input type="number" name="amount" placeholder="Amount" required><br>
+    <input type="text" name="account_number" placeholder="Account Number" required><br>
+    <input type="text" name="bank_code" placeholder="Bank Code" required><br>
+    <button type="submit">Withdraw</button>
+  </form>
+
+  <script>
+    async function postData(url, data) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      alert(JSON.stringify(json));
+    }
+
+    document.getElementById('registerForm').onsubmit = e => {
+      e.preventDefault();
+      postData('/api/register', {
+        name: e.target.name.value,
+        email: e.target.email.value
+      });
+    };
+
+    document.getElementById('depositForm').onsubmit = e => {
+      e.preventDefault();
+      postData('/api/deposit', {
+        userId: e.target.userId.value,
+        txRef: e.target.txRef.value
+      });
+    };
+
+    document.getElementById('withdrawForm').onsubmit = e => {
+      e.preventDefault();
+      postData('/api/withdraw', {
+        userId: e.target.userId.value,
+        amount: e.target.amount.value,
+        account_number: e.target.account_number.value,
+        bank_code: e.target.bank_code.value
+      });
+    };
+  </script>
+</body>
+</html>
