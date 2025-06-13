@@ -7,7 +7,7 @@ conn.run(`CREATE TABLE IF NOT EXISTS tasks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER,
   type TEXT,
-  task_id TEXT,
+  task TEXT,
   completed INTEGER DEFAULT 0,
   FOREIGN KEY (user_id) REFERENCES users(id)
 )`);
