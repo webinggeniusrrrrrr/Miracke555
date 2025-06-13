@@ -11,6 +11,7 @@ conn.run(`CREATE TABLE IF NOT EXISTS users (
   password TEXT,
   referral_code TEXT,
   referred_by TEXT,
+  tasks TEXT,
   balance REAL DEFAULT 0
 )`);
 
